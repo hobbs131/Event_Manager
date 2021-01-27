@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style media="screen">
+      #login {
+        text-align: center;
+        background-color: #2E8B57;
+        padding: 60px;
+      }
+
+      h1 {
+        font-size: 50px;
+      }
+
+      form {
+        padding: 60px;
+        margin: auto;
+        width: 60%;
+      }
+
+      input[type=text], input[type=password] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #0099ff;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #0099ff;
+        color: white;
+        padding: 15px 20px;
+        margin: 10px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        opacity: 0.5;
+      }
+
+      #invalid {
+        width: 100%;
+        text-align: center;
+        color: red;
+        font-size: 20px;
+      }
+    </style>
+    <title>Login Page</title>
+  </head>
+  <body>
+    <div id='login'>
+      <h1>Login Page</h1>
+      <p>Please enter your user name and password. Both are case sensitive.</p>
+    </div>
+
+    <div id='invalid'></div>
+
+    <form id="loginForm" method="post" action="/sendLoginDetails">
+      <label>User:</label><br>
+      <input id="username" name="username" type="text" placeholder='Enter Username' value="" required><br>
+      <label>Password:</label><br>
+      <input id="password" name="password" type="password" placeholder='Enter Password' value="" required><br>
+      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+
+    <script type="text/javascript">
+      $('#loginForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: '/sendLoginDetails',
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          statusCode: {
+            200: function() {
+              window.location.href = '/events';
+            },
+            490: function() {
+              document.getElementById('invalid').innerHTML = 'Invalid credentials. Please try again!';
+            }
+          }
+        })
+      })
+    </script>
+  </body>
+</html>

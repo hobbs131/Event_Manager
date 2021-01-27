@@ -1,0 +1,236 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style media="screen">
+  #msg {
+    width: 100%;
+    text-align: center;
+    color: red;
+    font-size: 20px;
+  }
+
+  .navbar {
+    background-color: #563d7c;
+  }
+  .navbar-default .navbar-nav li a{
+    color: #eee;
+  }
+  .navbar-default .navbar-nav li a:hover{
+    color: white;
+  }
+  th, td{
+    text-align: center;
+  }
+  thead {
+    background-color: #e57373;
+color: white;
+  }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/index"><b>Home</b></a></li>
+            <li><a href="/events"><b>Events</b></a></li>
+            <li><a href="/addEvent"><b>Add Event</b></a></li>
+            <li><a href="/stock"><b>Stock Page</b></a></li>
+            <li><a href="/admin"><b>Admin</b></a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a>Welcome <span id="username"></span></a></li>
+        </ul>
+    </div>
+  </nav>
+  <br><br>
+  <div class="container">
+      <div id="msg"></div>
+      <button class="btn btn-light" type="button" onclick="addUser()"><span class="glyphicon glyphicon-plus"></span> Add User</button>
+      <br><br>
+      <table class="table" id="scheduleTable">
+          <thead>
+              <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Login</th>
+                  <th scope="col">New Password</th>
+                  <th scope="col"></th>
+              </tr>
+          </thead>
+          <tbody id='accounts'></tbody>
+      </table>
+      &copy; 2020 Yang He, Ruofeng Liu, and Dan Challou.
+      Do not use, copy, redistribute this page or any portion of its contents, or remove this notice without the express written
+      consent of the authors. Violation of this copyright is plagarism and will result in a failing grade
+  </div>
+
+<script>
+$.ajax({
+  type: 'GET',
+  url: '/userLogin',
+  success: function(result) {
+    $('#username').html(result[0].acc_name);
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+      console.log(errorThrown);
+  }
+});
+
+$.ajax({
+  type: 'GET',
+  url: '/getListOfUsers',
+  success: function(rows) {
+    var out = "";
+    var i;
+    for(i = 0; i < rows.length; i++) {
+      out += '<tr><td>' + rows[i].acc_id + '</td>' +
+             '<td>' + rows[i].acc_name + '</td>' +
+             '<td>' + rows[i].acc_login + '</td>' +
+             '<td></td>' +
+             '<td><button type=\"button\" onclick="edit(this)" class="glyphicon glyphicon-pencil"></button>' +
+                     '<button type=\"button\" onclick="trash(this,' + rows[i].acc_id + ')" ' +
+                     'class="glyphicon glyphicon-trash"></button></td></tr>';
+    }
+    document.getElementById('accounts').innerHTML = out;
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+      console.log(errorThrown);
+  }
+});
+
+function edit(obj) {
+  document.getElementById('msg').innerHTML = '';
+  var currentRow = $(obj).closest('tr');
+  var index = $(obj).closest('tr').index();
+  var id = currentRow.find('td')[0].innerHTML;
+  var acc_name = currentRow.find('td')[1].innerHTML;
+  var acc_login = currentRow.find('td')[2].innerHTML;
+  if(index == 0) index = 1;
+  $('table > tbody > tr').eq(index-1).after('<tr><td>' + id + '</td>' +
+  '<td><input type="text" name="account_name" value="' + acc_name + '" required></td>' +
+  '<td><input type="text" name="account_login" value="' + acc_login + '" required></td>' +
+  '<td><input type="password" name="account_pwd" value="" required></td>' +
+  '<td><button type="button" onclick="update(this, '+ id + ')" class="glyphicon glyphicon-floppy-save"></button>' +
+  '<button type="button" onclick="cancel(this, false)" class="glyphicon glyphicon-refresh"></button></td></tr>');
+  currentRow.remove();
+}
+
+function update(obj, id) {
+  document.getElementById('msg').innerHTML = '';
+  var rowToBeUpdated = {
+    'account_id': id,
+    'account_name': $(obj).closest('tr').find("td").find("input")[0].value,
+    'account_login': $(obj).closest('tr').find("td").find("input")[1].value,
+    'account_pwd': $(obj).closest('tr').find("td").find("input")[2].value.trim()
+  }
+  $.ajax({
+    type: 'POST',
+    url: '/updateUser',
+    dataType: 'json',
+    contentType: "application/json; charset=utf-8",
+    data: JSON.stringify(rowToBeUpdated),
+    success: function(result) {
+      if (result.msg == 'false') {
+        document.getElementById('msg').innerHTML = 'This login is used by another user!';
+      } else {
+        window.location.href = '/admin';
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown);
+    }
+  });
+}
+
+function trash(obj, acc_id) {
+  document.getElementById('msg').innerHTML = '';
+  var data = {"id":acc_id};
+  $.ajax({
+    type: 'POST',
+    url: '/deleteUser',
+    dataType: 'json',
+    contentType: "application/json; charset=utf-8",
+    data: JSON.stringify(data),
+    statusCode: {
+      491: function() {
+        $(obj).closest('tr').fadeOut(300, function(){
+          $(obj).closest('tr').remove();
+        });
+      },
+      492: function() {
+        document.getElementById('msg').innerHTML = 'Cannot delete the user that is logged in!';
+      }
+    }
+  });
+}
+
+function addUser() {
+  document.getElementById('msg').innerHTML = '';
+  var insert ='<tr><td></td>' +
+        '<td><input type=\"text\" name=\"account_name\"  required></td>' +
+        '<td><input type=\"text\" name=\"account_login\" required></td>' +
+        '<td><input type="password" name="account_pwd" required></td>' +
+        '<td><button type=\"button\" onclick="saveAccount(this)" class="glyphicon glyphicon-floppy-save"></button>' +
+        '<button type=\"button\" onclick="cancel(this, true)" class="glyphicon glyphicon-remove"></button></td></tr>';
+  $('table').append(insert);
+
+}
+
+function saveAccount(obj) {
+  document.getElementById('msg').innerHTML = '';
+  var rowToBeInserted = {
+    'account_name': $(obj).closest('tr').find("td").find("input")[0].value,
+    'account_login': $(obj).closest('tr').find("td").find("input")[1].value,
+    'account_pwd': $(obj).closest('tr').find("td").find("input")[2].value.trim()
+  }
+  $.ajax({
+    type: 'POST',
+    url: '/addUser',
+    dataType: 'json',
+    contentType: "application/json; charset=utf-8",
+    data: JSON.stringify(rowToBeInserted),
+    success: function(result) {
+      if (result.msg == 'false') {
+          document.getElementById('msg').innerHTML = result.acc_login + ' has existed!';
+      } else {
+        $(obj).closest('tr').remove();
+        $('table').append('<tr><td>' + result[0].acc_id + '</td>' +
+               '<td>' + result[0].acc_name + '</td>' +
+               '<td>' + result[0].acc_login + '</td>' +
+               '<td></td>' +
+               '<td><button type=\"button\" onclick="edit(this)" class="glyphicon glyphicon-pencil"></button>' +
+                       '<button type=\"button\" onclick="trash(this,' + result[0].acc_id + ')" ' +
+                       'class="glyphicon glyphicon-trash"></button></td></tr>');
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+}
+
+function cancel(obj, btn_addUser) {
+  document.getElementById('msg').innerHTML = '';
+  var currentRow = $(obj).closest('tr');
+  var index = $(obj).closest('tr').index();
+  var id = currentRow.find('td')[0].innerHTML;
+  var acc_name = currentRow.find("td").find("input")[0].value;
+  var acc_login = currentRow.find("td").find("input")[1].value;
+  if (!btn_addUser) {
+    if(index == 0) index = 1;
+
+    $('table > tbody > tr').eq(index-1).after('<tr><td>' + id + '</td>' +
+           '<td>' + acc_name + '</td>' +
+           '<td>' + acc_login + '</td>' +
+           '<td></td>' +
+           '<td><button type=\"button\" onclick="edit(this)" class="glyphicon glyphicon-pencil"></button>' +
+                   '<button type=\"button\" onclick="trash(this,' + id + ')" ' +
+                   'class="glyphicon glyphicon-trash"></button></td></tr>');
+  }
+  currentRow.remove();
+}
+</script>
+
+</body>
+</html>

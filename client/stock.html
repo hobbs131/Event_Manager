@@ -1,0 +1,143 @@
+﻿<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+      textarea {
+          width: 100%;
+          min-height: 30rem;
+          background-color: black;
+          font-family: "Lucida Console", Monaco, monospace;
+          font-size: 0.75 rem;
+          line-height: 1.2;
+          color: #fff;
+      }
+
+      .navbar {
+        background-color: #563d7c;
+      }
+      .navbar-default .navbar-nav li a{
+        color: #eee;
+      }
+      .navbar-default .navbar-nav li a:hover{
+        color: white;
+      }
+      th, td{
+        text-align: center;
+      }
+      thead {
+        background-color: #e57373;
+    color: white;
+      }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+   	<div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li><a href="/index"><b>Home</b></a></li>
+        <li><a href="/events"><b>Events</b></a></li>
+        <li><a href="/addEvent"><b>Add Event</b></a></li>
+        <li><a href="/stock"><b>Stock Page</b></a></li>
+        <li><a href="/admin"><b>Admin</b></a></li>
+        <li><a href="/logout"><span class = "glyphicon glyphicon-log-out" aria-hidden= "true"></span></a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          <li><a>Welcome <span id="username"></span></a></li>
+      </ul>
+  	</div>
+	</nav>
+  <br><br>
+
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-body"><center>Welcome to Stock Page</center></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <table class="table table-bordered table-hover">
+          <tbody>
+            <tr>
+              <td class="col-md-6">Company</td>
+              <td class="col-md-6">
+                <div class="form-group">
+                  <select name="Company" id = 'Company'>
+                    <option value="MSFT">Microsoft</option>
+                    <option value="BA">Boeing Company</option>
+                    <option value="AAPL">Apple Inc</option>
+                    <option value="AMZN">Amazon</option>
+                    <option value="NVDA">NVIDIA Corporation</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <button type="button" onclick = "getData()">Get Data</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <table class="table" id="StockData">
+      <thead>
+        <tr>
+          <th scope="col">Company-MetaData</th>
+          <th scope="col">Stock-Info</th>
+        </tr>
+      </thead>
+      <tbody id = "body">
+        <tr>
+          <td><textarea id = "meta-data"></textarea></td>
+          <td><textarea id = "time-series"></textarea></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+
+  $.ajax({
+    type: 'GET',
+    url: '/userLogin',
+    success: function(result) {
+      $('#username').html(result[0].acc_name);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+
+  function getData(){
+    var companies = document.getElementById('Company');
+    var company = companies.options[companies.selectedIndex].value;
+    var apiKey = 'DL1GEJS0GG2VW38Y';
+    var xml = new XMLHttpRequest();
+    var url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + company + '&apikey=' + apiKey;
+    xml.open('GET', url, true);
+    xml.send();
+
+    xml.onreadystatechange = function(){
+      if (xml.readyState == 4 && xml.status == 200){
+        var metaData = JSON.parse(xml.responseText)['Meta Data'];
+        var timeSeries = JSON.parse(xml.responseText)['Time Series (Daily)'];
+        document.getElementById('meta-data').innerHTML = JSON.stringify(metaData,null, 4);
+        document.getElementById('time-series').innerHTML = JSON.stringify(timeSeries, null, 4);
+      }
+    }
+  }
+  </script>
+</body>
+</html>

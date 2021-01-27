@@ -1,0 +1,100 @@
+﻿<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+      .navbar {
+        background-color: #563d7c;
+      }
+      .navbar-default .navbar-nav li a{
+        color: #eee;
+      }
+      .navbar-default .navbar-nav li a:hover{
+        color: white;
+      }
+      th, td{
+        text-align: center;
+      }
+      thead {
+        background-color: #e57373;
+    color: white;
+      }
+
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+     	<div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li><a href="/index"><b>Home</b></a></li>
+          <li><a href="/events"><b>Events</b></a></li>
+          <li><a href="/addEvent"><b>Add Event</b></a></li>
+          <li><a href="/stock"><b>Stock Page</b></a></li>
+          <li><a href="/admin"><b>Admin</b></a></li>
+          <li><a href="/logout"><span class = "glyphicon glyphicon-log-out" aria-hidden= "true"></span></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a>Welcome <span id="username"></span></a></li>
+        </ul>
+    	</div>
+  	</nav>
+    <br><br>
+
+    <div class="container">
+      <table class="table" id="eventsTable">
+        <thead>
+          <tr>
+            <th scope="col">Day</th>
+            <th scope="col">Event</th>
+            <th scope="col">Time</th>
+            <th scope="col">Event Location <br> (Virtual or Physical) </th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Extra Info <br> (URL) </th>
+          </tr>
+        </thead>
+        <tbody id = 'eventsBody'></tbody>
+      </table>
+    </div>
+    <script type="text/javascript">
+      // TODO: Fetch events.json data from the server and display it in the eventsTable
+      var xml = new XMLHttpRequest();
+      xml.open("GET", "/getEvents", true);
+      xml.send();
+
+      xml.onreadystatechange = function(){
+        if (xml.readyState == 4 && xml.status == 200){
+          var eventDetails = JSON.parse(xml.responseText);
+          loadEventDetails(eventDetails);
+        }
+      }
+
+      $.ajax({
+        type: 'GET',
+        url: '/userLogin',
+        success: function(result) {
+          $('#username').html(result[0].acc_name);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown);
+        }
+      });
+
+      function loadEventDetails(eventDetails){
+        var eventsBody = "";
+        var i;
+        for (i = 0; i < eventDetails.length; i++){
+          eventsBody += '<tr><td>' + eventDetails[i].event_day + '</td>' +
+                        '<td>' + eventDetails[i].event_event + '</td>' +
+                        '<td>' + eventDetails[i].event_start + ' - ' + eventDetails[i].event_end + '</td>' +
+                        '<td>' + eventDetails[i].event_location + '</td>' +
+                        '<td>' + eventDetails[i].event_phone + '</td>' +
+                        '<td><a href=' + eventDetails[i].event_url + '>' + eventDetails[i].event_info + '</a></td></tr>';
+        }
+        document.getElementById('eventsBody').innerHTML = eventsBody;
+      }
+    </script>
+  </body>
+</html>
