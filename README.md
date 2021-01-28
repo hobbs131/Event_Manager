@@ -4,9 +4,6 @@
   
 - Frontend
   - Multiple page application created using HTML, CSS, and JavaScript
-- Deployment
-  - Deployed to heroku at ths131.herokuapp.com
-  - login: admin | password: admin
   
 - Features:
   - User authentication (login) and logout
@@ -21,5 +18,9 @@
     - Add users
     - Delete users
     - Update user name/password
+    
+ - Deployment
+  - Deployed to heroku at ths131.herokuapp.com
+  - login: admin | password: admin
   
  - TODO: Add demo
