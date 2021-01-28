@@ -19,8 +19,8 @@
     - Delete users
     - Update user name/password
     
- - Deployment
-  - Deployed to heroku at ths131.herokuapp.com
-  - login: admin | password: admin
+- Deployment
+ - Deployed to heroku at ths131.herokuapp.com
+ - login: admin | password: admin
   
  - TODO: Add demo
