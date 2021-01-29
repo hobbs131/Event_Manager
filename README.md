@@ -1,4 +1,4 @@
-# Full-stack-multipurpose-site
+# Full-stack-multipurpose-app
 - Backend
   - Fully specified REST backend built with Node.js, Express.js, and MySQL
   
