@@ -1,5 +1,5 @@
 # Full-stack-multipurpose-app
-
+by Tanner Hobbs
 ## Deployment
   - Deployed to heroku at <https://ths131.herokuapp.com/>
   - login: admin | password: admin
