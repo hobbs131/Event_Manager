@@ -1,7 +1,7 @@
 # Full-stack-multipurpose-app
 
-## Deploymeent
-  - Deployed to heroku at <https://ths131.herokuapp.com//>
+## Deployment
+  - Deployed to heroku at <https://ths131.herokuapp.com/>
   - login: admin | password: admin
 
 ## Technologies
