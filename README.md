@@ -7,7 +7,7 @@
 - Frontend
   - Multiple page application created using HTML, CSS, and JavaScript
   
-- Features:
+## Features:
   - User authentication (login) and logout
   - Events page
     - Table which contains information about events such as day, time, number, etc
