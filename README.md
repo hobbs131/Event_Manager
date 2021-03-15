@@ -1,5 +1,9 @@
 # Full-stack-multipurpose-app
 
+## Deploymeent
+  - Deployed to heroku at <https://ths131.herokuapp.com//>
+  - login: admin | password: admin
+
 ## Technologies
 - Backend
   - Fully specified REST backend built with Node.js, Express.js, and MySQL
@@ -21,8 +25,5 @@
     - Delete users
     - Update user name/password
     
-- Deployment
-  - Deployed to heroku at <https://ths131.herokuapp.com//>
-  - login: admin | password: admin
-  
- - TODO: Add demo
+## Screenshots
+ - TODO
