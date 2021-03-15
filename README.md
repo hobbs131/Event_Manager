@@ -36,3 +36,5 @@ Add Event Page
 ![add_event](https://user-images.githubusercontent.com/60115853/111186981-8eeb6900-8581-11eb-9e6d-b5e7084e7a17.png)
 Stock Page
 ![stock_page](https://user-images.githubusercontent.com/60115853/111187023-990d6780-8581-11eb-8ae9-7162e99896ed.png)
+Admin Page
+![admin_page](https://user-images.githubusercontent.com/60115853/111187092-a9bddd80-8581-11eb-98e0-fe7dbc21be64.png)
