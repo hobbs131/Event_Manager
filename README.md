@@ -1,4 +1,4 @@
-# Full-stack-multipurpose-app
+# Event Manager
 * Author: Tanner Hobbs
 ## Deployment
   - Deployed to heroku at <https://ths131.herokuapp.com/>
