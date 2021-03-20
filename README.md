@@ -19,7 +19,7 @@
   - Add Event page
     - Insert new event into database. Changes reflect on the Events page.
   - Stock page
-    - Uses alphavantage API to get stock data for companies available in the dropdown list. Uses AJAX to do a GET request ot the TIME_SERIES_DAILY endpoint of the alphavantage API.
+    - Uses Alpha Vantage API to get stock data for companies available in the dropdown list. Uses AJAX to do a GET request ot the TIME_SERIES_DAILY endpoint of the alphavantage API.
   - Admin page
     - Add users
     - Delete users
